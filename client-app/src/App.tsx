@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
+import { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
-import { CardHeader, List, ListItem } from "@mui/material";
+import { List, ListItem } from "@mui/material";
 
 function App() {
   const [activities, setActivities] = useState([]);
