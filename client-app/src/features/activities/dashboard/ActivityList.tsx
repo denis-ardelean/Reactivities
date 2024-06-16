@@ -11,18 +11,28 @@ import {
   Typography,
 } from "@mui/joy";
 import { Activity } from "../../../app/models/activity";
+import { SyntheticEvent, useState } from "react";
 
 interface Props {
   activities: Activity[];
   onSelectActivity: (id: string) => void;
   onDeleteActivity: (id: string) => void;
+  submitting: boolean;
 }
 
 export default function ActivityList({
   activities,
   onSelectActivity,
   onDeleteActivity,
+  submitting,
 }: Props) {
+  const [target, setTarget] = useState("");
+
+  function handleActivityDelete(id: string) {
+    setTarget(id);
+    onDeleteActivity(id);
+  }
+
   return (
     <>
       <List
@@ -76,7 +86,8 @@ export default function ActivityList({
                         View
                       </Button>
                       <Button
-                        onClick={() => onDeleteActivity(activity.id)}
+                        loading={submitting && target === activity.id}
+                        onClick={() => handleActivityDelete(activity.id)}
                         color="danger"
                       >
                         Delete
