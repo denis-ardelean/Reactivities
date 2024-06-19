@@ -10,19 +10,20 @@ import {
   Sheet,
   Typography,
 } from "@mui/joy";
-import { Activity } from "../../../app/models/activity";
+import { useState } from "react";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-  activities: Activity[];
-  onSelectActivity: (id: string) => void;
-  onDeleteActivity: (id: string) => void;
-}
+export default observer(function ActivityList() {
+  const { activityStore } = useStore();
+  const { deleteActivity, activitiesByDate, loading } = activityStore;
+  const [target, setTarget] = useState("");
 
-export default function ActivityList({
-  activities,
-  onSelectActivity,
-  onDeleteActivity,
-}: Props) {
+  function handleActivityDelete(id: string) {
+    setTarget(id);
+    deleteActivity(id);
+  }
+
   return (
     <>
       <List
@@ -34,7 +35,7 @@ export default function ActivityList({
           flex: "1",
         }}
       >
-        {activities.map((activity) => (
+        {activitiesByDate.map((activity) => (
           <>
             <ListItem key={activity.id}>
               <Card
@@ -70,13 +71,16 @@ export default function ActivityList({
                     </Sheet>
                     <Box>
                       <Button
-                        onClick={() => onSelectActivity(activity.id)}
+                        onClick={() =>
+                          activityStore.selectActivity(activity.id)
+                        }
                         sx={{ mr: 1 }}
                       >
                         View
                       </Button>
                       <Button
-                        onClick={() => onDeleteActivity(activity.id)}
+                        loading={loading && target === activity.id}
+                        onClick={() => handleActivityDelete(activity.id)}
                         color="danger"
                       >
                         Delete
@@ -92,4 +96,4 @@ export default function ActivityList({
       </List>
     </>
   );
-}
+});
