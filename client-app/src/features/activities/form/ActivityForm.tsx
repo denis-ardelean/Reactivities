@@ -8,22 +8,19 @@ import {
   Textarea,
 } from "@mui/joy";
 import { CardActions, FormControl } from "@mui/material";
-import { Activity } from "../../../app/models/activity";
 import { ChangeEvent, useState } from "react";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-  activity: Activity | undefined;
-  onCloseForm: () => void;
-  onCreateOrEdit: (activity: Activity) => void;
-  submitting: boolean;
-}
-
-export default function ActivityForm({
-  activity: selectedActivity,
-  onCloseForm,
-  onCreateOrEdit,
-  submitting
-}: Props) {
+export default observer(function ActivityForm() {
+  const { activityStore } = useStore();
+  const {
+    selectedActivity,
+    closeForm,
+    createActivity,
+    updateActivity,
+    loading,
+  } = activityStore;
   const initialState = selectedActivity ?? {
     id: "",
     title: "",
@@ -94,10 +91,18 @@ export default function ActivityForm({
           </FormControl>
           <CardActions sx={{ margin: 0, px: 0 }}>
             <Box sx={{ ml: "auto", mr: 0 }}>
-              <Button onClick={onCloseForm} color="neutral" sx={{ mr: 1 }}>
+              <Button onClick={closeForm} color="neutral" sx={{ mr: 1 }}>
                 Cancel
               </Button>
-              <Button loading={submitting} onClick={() => onCreateOrEdit(activity)} color="success">
+              <Button
+                loading={loading}
+                onClick={() => {
+                  activity.id
+                    ? updateActivity(activity)
+                    : createActivity(activity);
+                }}
+                color="success"
+              >
                 Submit
               </Button>
             </Box>
@@ -106,4 +111,4 @@ export default function ActivityForm({
       </Card>
     </>
   );
-}
+});

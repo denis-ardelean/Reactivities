@@ -1,11 +1,10 @@
 import { AppBar, Toolbar } from "@mui/material";
 import { Box, Typography, Button, Divider } from "@mui/joy";
+import { useStore } from "../stores/store";
 
-interface Props {
-  onOpenForm: () => void;
-}
+export default function NavBar() {
+  const { activityStore } = useStore();
 
-export default function NavBar({ onOpenForm }: Props) {
   return (
     <>
       <AppBar position="fixed">
@@ -44,7 +43,9 @@ export default function NavBar({ onOpenForm }: Props) {
             />
           </Box>
           <Box display="flex" sx={{ alignItems: "center" }}>
-            <Button color="success" onClick={onOpenForm}>Create Activity</Button>
+            <Button color="success" onClick={() => activityStore.openForm()}>
+              Create Activity
+            </Button>
           </Box>
         </Toolbar>
       </AppBar>

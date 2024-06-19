@@ -8,19 +8,19 @@ import {
   Divider,
   Typography,
 } from "@mui/joy";
-import { Activity } from "../../../app/models/activity";
+import { useStore } from "../../../app/stores/store";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
-interface Props {
-  activity: Activity;
-  onCancelSelectActivity: () => void;
-  onOpenForm: (id: string) => void;
-}
+export default function ActivityDetails() {
+  const { activityStore } = useStore();
+  const {
+    selectedActivity: activity,
+    openForm,
+    cancelSelectedActivity,
+  } = activityStore;
 
-export default function ActivityDetails({
-  activity,
-  onCancelSelectActivity,
-  onOpenForm
-}: Props) {
+  if (!activity) return <LoadingComponent content={""} />;
+
   return (
     <>
       <Card
@@ -44,14 +44,19 @@ export default function ActivityDetails({
         <CardOverflow variant="soft" sx={{ bgcolor: "white" }}>
           <Divider inset="context" />
           <CardActions orientation="horizontal">
-            <Button onClick={() => onOpenForm(activity.id)} variant="outlined" color="primary" fullWidth>
+            <Button
+              onClick={() => openForm(activity.id)}
+              variant="outlined"
+              color="primary"
+              fullWidth
+            >
               Edit
             </Button>
             <Button
               variant="outlined"
               color="neutral"
               fullWidth
-              onClick={onCancelSelectActivity}
+              onClick={cancelSelectedActivity}
             >
               Cancel
             </Button>
