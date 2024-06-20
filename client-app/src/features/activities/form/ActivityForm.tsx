@@ -8,20 +8,27 @@ import {
   Textarea,
 } from "@mui/joy";
 import { CardActions, FormControl } from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { useNavigate, useParams } from "react-router-dom";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { v4 as uuid } from "uuid";
+import { Link } from "react-router-dom";
 
 export default observer(function ActivityForm() {
+  const navigate = useNavigate();
   const { activityStore } = useStore();
   const {
-    selectedActivity,
-    closeForm,
     createActivity,
     updateActivity,
     loading,
+    loadActivity,
+    loadingInitial,
   } = activityStore;
-  const initialState = selectedActivity ?? {
+  const { id } = useParams();
+
+  const [activity, setActivity] = useState({
     id: "",
     title: "",
     category: "",
@@ -29,8 +36,29 @@ export default observer(function ActivityForm() {
     date: "",
     city: "",
     venue: "",
-  };
-  const [activity, setActivity] = useState(initialState);
+  });
+
+  useEffect(() => {
+    console.log(`Inside useEffect`);
+    if (id) {
+      console.log(`Inside if`);
+      loadActivity(id).then((activity) => {
+        setActivity(activity!);
+      });
+    }
+
+    return () => {
+      setActivity({
+        id: "",
+        title: "",
+        category: "",
+        description: "",
+        date: "",
+        city: "",
+        venue: "",
+      });
+    };
+  }, [id, loadActivity]);
 
   function handleInputChanged(
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -38,6 +66,25 @@ export default observer(function ActivityForm() {
     const { name, value } = event.target;
     setActivity({ ...activity, [name]: value });
   }
+
+  function handleSubmit() {
+    if (activity.id.length === 0) {
+      let newActivity = {
+        ...activity,
+        id: uuid(),
+      };
+      createActivity(newActivity).then(() =>
+        navigate(`/activities/${newActivity.id}`)
+      );
+    } else {
+      updateActivity(activity).then(() =>
+        navigate(`/activities/${activity.id}`)
+      );
+    }
+  }
+
+  if (loadingInitial)
+    return <LoadingComponent content="Loading activity ..." />;
 
   return (
     <>
@@ -91,15 +138,13 @@ export default observer(function ActivityForm() {
           </FormControl>
           <CardActions sx={{ margin: 0, px: 0 }}>
             <Box sx={{ ml: "auto", mr: 0 }}>
-              <Button onClick={closeForm} color="neutral" sx={{ mr: 1 }}>
+              <Button component={Link} to="/activities" color="neutral" sx={{ mr: 1 }}>
                 Cancel
               </Button>
               <Button
                 loading={loading}
                 onClick={() => {
-                  activity.id
-                    ? updateActivity(activity)
-                    : createActivity(activity);
+                  handleSubmit();
                 }}
                 color="success"
               >

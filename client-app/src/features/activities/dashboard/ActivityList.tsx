@@ -10,9 +10,10 @@ import {
   Sheet,
   Typography,
 } from "@mui/joy";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { NavLink } from "react-router-dom";
 
 export default observer(function ActivityList() {
   const { activityStore } = useStore();
@@ -36,7 +37,7 @@ export default observer(function ActivityList() {
         }}
       >
         {activitiesByDate.map((activity) => (
-          <>
+          <Fragment key={activity.id}>
             <ListItem key={activity.id}>
               <Card
                 sx={{
@@ -71,9 +72,8 @@ export default observer(function ActivityList() {
                     </Sheet>
                     <Box>
                       <Button
-                        onClick={() =>
-                          activityStore.selectActivity(activity.id)
-                        }
+                        component={NavLink}
+                        to={`/activities/${activity.id}`}
                         sx={{ mr: 1 }}
                       >
                         View
@@ -91,7 +91,7 @@ export default observer(function ActivityList() {
               </Card>
             </ListItem>
             <ListDivider inset="gutter" />
-          </>
+          </Fragment>
         ))}
       </List>
     </>

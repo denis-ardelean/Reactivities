@@ -10,16 +10,24 @@ import {
 } from "@mui/joy";
 import { useStore } from "../../../app/stores/store";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 
-export default function ActivityDetails() {
+export default observer(function ActivityDetails() {
   const { activityStore } = useStore();
   const {
     selectedActivity: activity,
-    openForm,
-    cancelSelectedActivity,
+    loadActivity,
+    loadingInitial,
   } = activityStore;
+  const { id } = useParams();
 
-  if (!activity) return <LoadingComponent content={""} />;
+  useEffect(() => {
+    if (id) loadActivity(id);
+  }, [id, loadActivity]);
+
+  if (loadingInitial || !activity) return <LoadingComponent content={"Loading activity ..."} />;
 
   return (
     <>
@@ -30,9 +38,9 @@ export default function ActivityDetails() {
         <CardOverflow>
           <AspectRatio>
             <img
-              src={`./assets/categoryImages/${activity.category}.jpg`}
+              src={`${process.env.PUBLIC_URL}/assets/categoryImages/${activity.category}.jpg`}
               loading="lazy"
-              alt=""
+              alt="something"
             />
           </AspectRatio>
         </CardOverflow>
@@ -45,7 +53,8 @@ export default function ActivityDetails() {
           <Divider inset="context" />
           <CardActions orientation="horizontal">
             <Button
-              onClick={() => openForm(activity.id)}
+              component={Link}
+              to={`/manage/${activity.id}`}
               variant="outlined"
               color="primary"
               fullWidth
@@ -53,10 +62,11 @@ export default function ActivityDetails() {
               Edit
             </Button>
             <Button
+              component={Link}
+              to={`/activities`}
               variant="outlined"
               color="neutral"
               fullWidth
-              onClick={cancelSelectedActivity}
             >
               Cancel
             </Button>
@@ -65,4 +75,4 @@ export default function ActivityDetails() {
       </Card>
     </>
   );
-}
+});

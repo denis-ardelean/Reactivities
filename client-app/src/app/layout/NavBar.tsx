@@ -1,15 +1,28 @@
 import { AppBar, Toolbar } from "@mui/material";
 import { Box, Typography, Button, Divider } from "@mui/joy";
-import { useStore } from "../stores/store";
+import { NavLink } from "react-router-dom";
 
 export default function NavBar() {
-  const { activityStore } = useStore();
+  const navStyles = {
+    textDecoration: "none",
+    width: "auto",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    borderRadius: "sm",
+    px: "10px",
+    "&:hover": {
+      backgroundColor: "hsl(0, 0%, 100%, 0.1)",
+    },
+    "&.active": {
+      backgroundColor: "hsl(0, 0%, 100%, 0.3)",
+    },
+  };
 
   return (
     <>
       <AppBar position="fixed">
         <Toolbar variant="dense">
-          <Box display="flex" sx={{ alignItems: "center" }}>
+          <Box display="flex" sx={navStyles} component={NavLink} to={"/"}>
             <img
               src="/assets/logo.png"
               alt="logo"
@@ -21,14 +34,19 @@ export default function NavBar() {
               component="div"
               sx={{ flexGrow: 1 }}
             >
-              News
+              Reactivities
             </Typography>
-            <Divider
-              orientation="vertical"
-              sx={{ ml: "10px", mr: "10px", bgcolor: "white" }}
-            />
           </Box>
-          <Box display="flex" sx={{ alignItems: "center" }}>
+          <Divider
+            orientation="vertical"
+            sx={{ mx: "10px", my: "5px", bgcolor: "white" }}
+          />
+          <Box
+            display="flex"
+            sx={navStyles}
+            component={NavLink}
+            to={"/activities"}
+          >
             <Typography
               textColor="background.body"
               level="h4"
@@ -37,13 +55,13 @@ export default function NavBar() {
             >
               Activities
             </Typography>
-            <Divider
-              orientation="vertical"
-              sx={{ ml: "10px", mr: "10px", bgcolor: "white" }}
-            />
           </Box>
+          <Divider
+            orientation="vertical"
+            sx={{ mx: "10px", my: "5px", bgcolor: "white" }}
+          />
           <Box display="flex" sx={{ alignItems: "center" }}>
-            <Button color="success" onClick={() => activityStore.openForm()}>
+            <Button color="success" component={NavLink} to={"/createActivity"}>
               Create Activity
             </Button>
           </Box>
