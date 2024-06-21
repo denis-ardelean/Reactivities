@@ -1,18 +1,15 @@
 import {
-  AspectRatio,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardOverflow,
-  Divider,
-  Typography,
+  Grid,
 } from "@mui/joy";
 import { useStore } from "../../../app/stores/store";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
+import ActivityDetailedHeader from "./ActivityDetailedHeader";
+import ActivityDetailedInfo from "./ActivityDetailedInfo";
+import ActivityDetailedChat from "./ActivityDetailedChat";
+import ActivityDetailedSidebar from "./ActivityDetailedSidebar";
 
 export default observer(function ActivityDetails() {
   const { activityStore } = useStore();
@@ -27,11 +24,22 @@ export default observer(function ActivityDetails() {
     if (id) loadActivity(id);
   }, [id, loadActivity]);
 
-  if (loadingInitial || !activity) return <LoadingComponent content={"Loading activity ..."} />;
+  if (loadingInitial || !activity)
+    return <LoadingComponent content={"Loading activity ..."} />;
 
   return (
     <>
-      <Card
+      <Grid container spacing={2}>
+        <Grid xs={7}>
+          <ActivityDetailedHeader activity={activity} />
+          <ActivityDetailedInfo />
+          <ActivityDetailedChat />
+        </Grid>
+        <Grid xs={5}>
+          <ActivityDetailedSidebar />
+        </Grid>
+      </Grid>
+      {/* <Card
         variant="outlined"
         sx={{ maxHeight: "max-content", maxWidth: "100%", mx: "auto" }}
       >
@@ -72,7 +80,7 @@ export default observer(function ActivityDetails() {
             </Button>
           </CardActions>
         </CardOverflow>
-      </Card>
+      </Card> */}
     </>
   );
 });
