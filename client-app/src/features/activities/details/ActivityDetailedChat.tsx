@@ -1,3 +1,7 @@
 export default function ActivityDetailedChat() {
-  return <></>;
+  return (
+    <>
+      <h1>Chat</h1>
+    </>
+  );
 }
